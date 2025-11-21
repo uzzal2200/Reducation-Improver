@@ -53,6 +53,7 @@ streamlit run main.py
 - Optionally, provide a Groq model name if the default is decommissioned
 - Paste your draft text, choose a tone and dialect, and submit
 
+<<<<<<< HEAD
 Live demo (hosted): [Open the live Streamlit app](https://vlbrirdwhshb5weehrp6pc.streamlit.app/)
 
 Note: the live deployment is a public preview — API keys and usage
@@ -69,6 +70,8 @@ the instructions above.
 	installing in a fresh Conda environment or by using Conda packages
 	for binary dependencies like `numpy`.
 - Keep your Groq API key secret — do not commit it to source control.
+=======
+>>>>>>> aecd73954b80cbff07bb196e0f2d32564ac57495
 
 ## Developer Notes
 
@@ -86,4 +89,5 @@ This project is provided under the MIT license. Update the `LICENSE`
 file if a different license is required.
 
 ---
+
 MD Uzzal Mia
