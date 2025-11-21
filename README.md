@@ -80,6 +80,10 @@ versions.
 
 Detailed architecture
 
+Rendered diagram (SVG):
+
+![Architecture diagram](assets/architecture.svg)
+
 Mermaid (flowchart):
 
 ```mermaid
