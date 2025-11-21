@@ -52,7 +52,7 @@ streamlit run main.py
 - Optional Groq model name (if the default model is decommissioned)
 - Draft text, tone, and dialect
 
-Architecture 
+Architecture
 ---------------------
 
 The runtime flow is intentionally minimal and robust: prompt
@@ -92,21 +92,23 @@ Configuration
 	decommissioned.
 
 Troubleshooting
----------------
-- model_decommissioned: supply a supported model name or check
-	Groq deprecations: https://console.groq.com/docs/deprecations
-- installation issues: prefer a fresh Conda env and install binary
-	packages (numpy) via Conda if pip wheels fail
-- import errors in editors: ensure the IDE uses the same Python
-	interpreter/environment you use to run Streamlit
+Mermaid flowchart (for renderers that support it):
 
-Developer notes
----------------
-- Primary file: `main.py` — prompt, client creation, extraction,
-	post-processing, and Streamlit UI.
-- Prompt tuning: edit the `PromptTemplate` examples in `main.py` to
-	change redaction rules, tone guidance, or dialect vocabulary.
-- Tests & CI: consider adding a quick syntax test (`python -m
+```mermaid
+flowchart LR
+	U[User / Browser / Streamlit UI]
+	U -->|enter draft, tone, dialect, API key| S[Streamlit App (`main.py`)]
+	S --> P[PromptTemplate]
+	P --> L[LangChain: ChatGroq client]
+	L --> G[Groq API / Model]
+	G --> M[Model Response]
+	M --> X[Post-process: Extract & Clean]
+	X --> O[UI Output: Clean rewritten text]
+	style U fill:#f9f,stroke:#333,stroke-width:1px
+	style S fill:#cff,stroke:#333,stroke-width:1px
+	style G fill:#fee,stroke:#333,stroke-width:1px
+	style X fill:#efe,stroke:#333,stroke-width:1px
+```
 	py_compile main.py`) and a lightweight CI workflow to validate the
 	app starts cleanly.
 
