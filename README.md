@@ -1,3 +1,8 @@
+<!--
+	Professional README written for developer consumption. Keep this
+	concise and focused: setup, architecture, usage, troubleshooting.
+-->
+
 # Redaction & Rewrite — Streamlit LLM Rewrite App
 
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
@@ -6,23 +11,31 @@
 [![Groq](https://img.shields.io/badge/groq-provided-lightgrey.svg)](https://console.groq.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Professional, minimal Streamlit app that rewrites or redacts draft text
-into a chosen tone and dialect using a Groq LLM via LangChain. The
-output is cleaned of provider metadata and returned as plain, human
-readable text suitable for direct use in user-facing content.
+Short description
+-----------------
 
-This README provides concise setup steps, architecture details, and
-troubleshooting guidance for local development and evaluation.
+Redaction & Rewrite is a focused Streamlit prototype that rewrites or
+redacts user-provided draft text into a chosen tone and dialect using
+Groq models orchestrated via LangChain. The app cleans provider
+metadata and returns plain, human-readable text suitable for
+copy/paste into customer-facing interfaces.
 
-## Quick Start
+When to use this repo
+----------------------
+- Rapid prototyping of text rewrite/redaction flows with Groq LLMs.
+- Reference implementation for integrating `langchain_groq` into a
+	Streamlit UI.
 
-1. Create and activate a Conda environment (recommended):
+Quick setup (developer)
+------------------------
+1. Create a Conda environment (recommended):
 
 ```powershell
-conda create -n llmapp python=3.11 -y; conda activate llmapp
+conda create -n llmapp python=3.11 -y
+conda activate llmapp
 ```
 
-2. Install dependencies:
+2. Install runtime dependencies:
 
 ```powershell
 pip install -r requirements.txt
@@ -35,80 +48,80 @@ streamlit run main.py
 ```
 
 4. In the UI provide:
-- your Groq API key (never commit it)
-- an optional Groq model name if the default is decommissioned
-- the draft text, tone, and dialect
+- Groq API key (never commit; enter into the secure input field)
+- Optional Groq model name (if the default model is decommissioned)
+- Draft text, tone, and dialect
 
-## Architecture & Visual Diagram
+Architecture 
+---------------------
 
-The application follows a small, clear pipeline: prompt construction →
-LLM request → generation extraction → post-processing → UI output.
+The runtime flow is intentionally minimal and robust: prompt
+construction → LLM call → generation extraction → post-processing →
+UI output.
 
-If the diagram below does not render in your viewer, open
-`assets/architecture.svg` directly in your browser or click the image.
+If your viewer does not render diagrams, open `assets/architecture.svg`.
 
 <p align="center">
 	<a href="./assets/architecture.svg" target="_blank">
-		<img src="assets/architecture.svg" alt="Architecture diagram" style="max-width:100%;height:auto;"/>
+		<img src="assets/architecture.svg" alt="Architecture diagram" style="max-width:100%;height:auto;border:1px solid #ddd;padding:6px;"/>
 	</a>
 </p>
 
-Mermaid flowchart (for renderers that support it):
-
-```mermaid
-flowchart LR
-	U[User Browser / Streamlit UI]
-	U -->|enter draft, tone, dialect, API key| S[Streamlit App (`main.py`)]
-	S --> P[PromptTemplate]
-	P --> R[Formatted Prompt]
-	R --> L[LangChain: ChatGroq Client]
-	L --> G[Groq API / Model]
-	G --> M[Model Response (may include metadata)]
-	M --> X[Post-process: Extract & Clean]
-	X --> O[UI Output: Clean rewritten text]
-```
-
-Text (linear):
+Core pipeline (text):
 
 ```
-[User] -> [Streamlit App (main.py)] -> [PromptTemplate] -> [ChatGroq client] -> [Groq Model] -> [Extract & Clean] -> [UI Output]
+[User] -> [Streamlit App (`main.py`)] -> [PromptTemplate] -> [LangChain ChatGroq client] -> [Groq model] -> [Extractor & Cleaner] -> [UI Output]
 ```
 
-## How it works (technical)
+How it works (details)
+----------------------
+- Prompt assembly: `main.py` defines a `PromptTemplate` that combines
+	tone and dialect examples with the user's draft.
+- LLM call: the app creates a `langchain_groq.ChatGroq` client and
+	sends a single chat-style message (as a plain dict) for compatibility
+	across LangChain versions.
+- Extraction: the app reads the top generation (`resp.generations[0][0]`)
+	and prefers `generation.message.content` then `generation.text`.
+- Cleaning: provider metadata is removed by a small extractor so the
+	UI shows only the rewritten text.
 
-- The `PromptTemplate` in `main.py` injects the draft plus tone/dialect
-	examples into a structured prompt.
-- The app uses `langchain_groq.ChatGroq` to create a client and sends a
-	single chat-style message as a plain dict: `{ "role": "user",
-	"content": <prompt> }` for broad compatibility.
-- The top generation is read from `resp.generations[0][0]`. The code
-	prefers `generation.message.content` then `generation.text` before
-	falling back to `str(gen)`.
-- A small extractor strips provider metadata such as
-	`content='...' response_metadata=...` so the UI shows only human
-	readable text.
+Configuration
+-------------
+- `Groq API Key`: provided at runtime in the UI. Keep it secret.
+- `Groq Model`: optional override for situations where the default is
+	decommissioned.
 
-## Troubleshooting
+Troubleshooting
+---------------
+- model_decommissioned: supply a supported model name or check
+	Groq deprecations: https://console.groq.com/docs/deprecations
+- installation issues: prefer a fresh Conda env and install binary
+	packages (numpy) via Conda if pip wheels fail
+- import errors in editors: ensure the IDE uses the same Python
+	interpreter/environment you use to run Streamlit
 
-- If you receive a `model_decommissioned` error, enter a supported
-	model name in the "Groq Model (optional)" field or consult:
-	https://console.groq.com/docs/deprecations
-- If `pip install` fails on binary packages (e.g. `numpy`), prefer a
-	fresh Conda env or install the heavy packages via Conda.
-- Ensure your editor/IDE uses the same Python environment you run
-	Streamlit from to avoid import errors (e.g. `langchain_core`).
+Developer notes
+---------------
+- Primary file: `main.py` — prompt, client creation, extraction,
+	post-processing, and Streamlit UI.
+- Prompt tuning: edit the `PromptTemplate` examples in `main.py` to
+	change redaction rules, tone guidance, or dialect vocabulary.
+- Tests & CI: consider adding a quick syntax test (`python -m
+	py_compile main.py`) and a lightweight CI workflow to validate the
+	app starts cleanly.
 
-## Developer notes
+Contributing
+------------
+- Fork and open a PR. Keep changes small and focused (prompt text,
+	docs, tests). Add unit tests for any non-trivial extraction logic.
 
-- Main file: `main.py` — prompt, LLM client, extraction, and UI logic.
-- To adjust rewrite behavior, edit the `PromptTemplate` examples in
-	`main.py`.
-- Consider adding a lightweight test that validates prompt formatting
-	and that `main.py` compiles.
+License
+-------
+MIT — see the `LICENSE` file.
 
-## License
-
-MIT — update `LICENSE` if you choose a different license.
+Contact
+-------
+Maintainer: MD Uzzal Mia — update contact details as needed.
 
 ---
 MD Uzzal Mia
