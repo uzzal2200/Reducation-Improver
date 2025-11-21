@@ -61,11 +61,17 @@ UI output.
 
 If your viewer does not render diagrams, open `assets/architecture.svg`.
 
-<p align="center">
-	<a href="./assets/architecture.svg" target="_blank">
-		<img src="assets/architecture.svg" alt="Architecture diagram" style="max-width:100%;height:auto;border:1px solid #ddd;padding:6px;"/>
-	</a>
-</p>
+Figure 1 — Architecture (click to open):
+
+[Open architecture.svg](./assets/architecture.svg)
+
+Figure 2 — RAG data flow & components (click to open):
+
+[Open RAG architecture](./assets/rag_architecture.svg)
+
+Figure 3 — Project-specific architecture (click to open):
+
+[Open project architecture](./assets/project_architecture_custom.svg)
 
 Core pipeline (text):
 
@@ -97,17 +103,13 @@ Mermaid flowchart (for renderers that support it):
 ```mermaid
 flowchart LR
 	U[User / Browser / Streamlit UI]
-	U -->|enter draft, tone, dialect, API key| S[Streamlit App (`main.py`)]
+	U -->|enter draft, tone, dialect, API key| S[Streamlit App - main.py]
 	S --> P[PromptTemplate]
-	P --> L[LangChain: ChatGroq client]
+	P --> L[LangChain ChatGroq]
 	L --> G[Groq API / Model]
 	G --> M[Model Response]
 	M --> X[Post-process: Extract & Clean]
-	X --> O[UI Output: Clean rewritten text]
-	style U fill:#f9f,stroke:#333,stroke-width:1px
-	style S fill:#cff,stroke:#333,stroke-width:1px
-	style G fill:#fee,stroke:#333,stroke-width:1px
-	style X fill:#efe,stroke:#333,stroke-width:1px
+	X --> O[UI Output - Clean rewritten text]
 ```
 	py_compile main.py`) and a lightweight CI workflow to validate the
 	app starts cleanly.
