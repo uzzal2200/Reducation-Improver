@@ -91,6 +91,49 @@ How it works (details)
 - Cleaning: provider metadata is removed by a small extractor so the
 	UI shows only the rewritten text.
 
+Markdown-friendly architecture diagram (ASCII)
+------------------------------------------------
+
+The diagram below is a plain Markdown code block that renders in any
+viewer. It describes the project indexing and runtime pipeline in a
+compact, copyable format.
+
+```text
+												 Indexing
+	+--------+   +---------+   +-----------+   +------------------+
+	| Loader | ->|Splitter | ->|Embeddings | ->|  Vector Store    |
+	|(txt/   |   |(char/   |   |(OpenAI /  |   | (FAISS/Chroma/   |
+	| html / |   | sentence)|   |  SB / ...) |   |  Pinecone etc.)  |
+	| pdf)   |   +---------+   +-----------+   +------------------+
+		 ^
+		 |                          runtime
+		 |                          context
+		 |                               +------------------+
+		 |                               |  LangChain /     |
+		 +-------------------------------|  ChatGroq client  |
+																		 |  (Groq model)     |
+																		 +------------------+
+																							^
+																							|
+	+------------------+    +------------------+|
+	| Streamlit / UI   | -> | PromptTemplate   ||
+	| (main.py)        |    | (builds prompt)  ||
+	+------------------+    +------------------+|
+											\______________________/
+															 |
+															 v
+										 +-------------------------+
+										 | Post-process: Extract  |
+										 | & Clean (remove meta)  |
+										 +-------------------------+
+															 |
+															 v
+										 +-------------------------+
+										 | UI Output: Clean text  |
+										 +-------------------------+
+
+```
+
 Configuration
 -------------
 - `Groq API Key`: provided at runtime in the UI. Keep it secret.
